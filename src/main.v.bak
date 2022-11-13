@@ -1,0 +1,39 @@
+module spi_slave (
+	input clk,
+	input [7:0] datain, //in from top_model
+	output [7:0] dataout, //out into top_model
+	input set,
+	input read,
+	
+	input mosi,
+	output miso,
+	output sck
+	);
+	
+	initial begin
+		out_reg <= 8'b0;
+	end
+	
+	reg [8:0] to_send;
+	reg [7:0] out_reg;
+	
+	assign sck = clk;
+	assign dataout = out_reg;
+	assign miso = to_send[8];
+	
+	always @ (posedge read) begin
+		out_reg <= to_send[7:0];
+	end
+		
+	always @ (posedge clk) begin
+		if (set == 1) begin
+			to_send [7:0] <= datain;
+			to_send [8] <= (^datain);
+		end
+		else begin
+			to_send <= to_send << 1;
+			to_send[0] <= mosi;
+		end
+	end
+	
+endmodule
