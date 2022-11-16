@@ -1,0 +1,31 @@
+module counter_rst(
+    input [2:0] state,
+    input [1:0] opcode,
+    input cmp,
+    input [3:0] count,
+    output out
+);
+
+  wire jump = opcode[1]&!opcode[0]&cmp;
+  wire [7:0] comb_in = {count[0], count[1], count[2], count[3], cmp, state[0], state[1], state[2]};
+  assign out = (comb_in == 8'f01) ? 1'b1:
+               (comb_in == 8'f02) ? 1'b1:
+               (comb_in == 8'f05) ? 1'b1:
+               (comb_in == 8'f09) ? 1'b1:
+               (comb_in == 8'f0D) ? 1'b1:
+               (comb_in == 8'f16) ? 1'b1:
+               (comb_in == 8'f1E) ? 1'b1:
+               (comb_in == 8'f80) ? 1'b1:
+               (comb_in == 8'f88) ? 1'b1:
+               (comb_in == 8'f8A) ? 1'b1:
+               (comb_in == 8'fB4) ? 1'b1:
+               (comb_in == 8'fBC) ? 1'b1:
+               1'b0;
+
+endmodule
+
+/*
+Resource Usage: 5 LE
+
+
+*/

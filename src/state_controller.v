@@ -6,6 +6,8 @@ module state_controller(
     output [2:0] out
 );
 
+	 
+
     reg [2:0] states = 3'b0;
 
     always @(posedge clk) begin
@@ -17,3 +19,9 @@ module state_controller(
     assign out = states;
 
 endmodule
+
+/*
+Resource Usage: 3 LE
+
+
+*/
