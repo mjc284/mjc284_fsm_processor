@@ -5,7 +5,7 @@ module counter(
     output [3:0] out
 );
 
-    reg [3:0] cnt;
+    reg [3:0] cnt = 4'b0;
 
     always @(posedge clk) begin
 	 /*

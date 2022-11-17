@@ -1,0 +1,61 @@
+module fsm_processor(
+	output clk,
+	input cmp,
+	output data
+)
+
+	wire clk = !but3;
+	wire data = !but2;
+	
+	wire [2:0] state;
+	
+	reg [1:0] opcode;
+	wire op_clk = !state[2]&!state[1]&!state[0]&!clk;
+	always @(posedge op_clk) begin
+		opcode <= {opcode[0], data};
+	end
+
+	wire rst;	
+	reg state_controller_clk_reg = 1'b0;
+	always @(negedge clk)
+		state_controller_clk_reg <= rst;
+	wire state_cntroller_clk = state_controller_clk_reg&clk;
+	state_controller State_Controller(
+		.in1(opcode[0]),
+		.in2(opcode[1]),
+		.clk(state_cntroller_clk),
+		.out(state)
+	);
+
+	wire [3:0] count;
+	counter Counter(
+    .clk(clk),
+    .rst(rst),
+
+    .out(count)
+	);
+	
+	counter_rst Counter_RST(
+		.state(state),
+    	.opcode(opcode),
+    	.cmp(!but1),
+    	.count(count),
+ 		.out(rst)
+	);
+	
+	wire data_clk = !state[2]&!state[1]&state[0]&!clk;
+	reg [15:0] reg_data = 16'b0;
+	always @(posedge data_clk) begin
+		reg_data <= {reg_data[14:0], data};
+	end
+	
+	reg drclk = 1'b0;
+	always @(negedge clk) begin
+		drclk <= state[2]&!state[1]&!state[0];
+	end
+	
+	wire arclk = !state[2]&state[1]&!state[0]&!clk | !state[2]&state[1]&state[0]&!clk;
+	
+	
+	
+endmodule

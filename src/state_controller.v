@@ -8,7 +8,7 @@ module state_controller(
 
 	 
 
-    reg [2:0] states = 3'b0;
+    reg [2:0] states = 3'd3;
 
     always @(posedge clk) begin
         states[2] <= !states[2]&states[1];
