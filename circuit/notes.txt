@@ -1,0 +1,7 @@
+Notes:
+
+The circuit was implemented and simulated on the 
+'Digital' software:
+
+https://github.com/hneemann/Digital
+
