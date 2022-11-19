@@ -1,0 +1,8 @@
+-- FSM Processor Assembler generated Memory Initialization File (.mif)
+
+WIDTH=16;
+DEPTH=512;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=UNS;
+
