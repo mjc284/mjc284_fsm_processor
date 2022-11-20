@@ -1,21 +1,21 @@
-//Assembly code instruction set:
+#Assembly code instruction set:
 
-//beq operand => skip next instruction if operand = input
-//bne operand => skip next instruction if operand != input
-//blt operand => skip next instruction if operand < input
-//bge operand => skip next instruction if operand >= input
-//out data => output data
-//jmp address => jump to address
+#beq operand => skip next instruction if operand = input
+#bne operand => skip next instruction if operand != input
+#blt operand => skip next instruction if operand < input
+#bge operand => skip next instruction if operand >= input
+#out data => output data
+#jmp address => jump to address
 
-//Sample Blinky program:
-//(assuming input state stays at 0)
+#Sample Blinky program:
+#(assuming input state stays at 0)
 
 beq 0
-jmp 0
+jmp 0 #testing comment
 bne 1
 jmp 0
 out 0
-jmp 8
+jmp 0d8 #8
 
 out 10
 jmp 0
