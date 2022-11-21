@@ -15,7 +15,6 @@ module main (
 	always @(posedge clk)
 		cnt <= cnt + 1'b1;
 
-		wire testest;
 	fsm_processor FSM_Processor(
 		.clk(cnt[19]),
 		.clk_ram(clk),
