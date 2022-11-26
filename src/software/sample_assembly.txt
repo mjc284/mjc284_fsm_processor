@@ -1,28 +1,19 @@
 #Assembly code instruction set:
 
-#beq operand => skip next instruction if operand = input
-#bne operand => skip next instruction if operand != input
-#blt operand => skip next instruction if operand < input
-#bge operand => skip next instruction if operand >= input
-#out data => output data
-#jmp address => jump to address
+#out data => output data: ({slave_select[5:0], mosi[7:0]})
+#beq data => skip following instruction if data[7:0] = miso[7:0]
+#jmp address => jump to address[8:0]
 
 #Sample Blinky program:
-#(assuming input state stays at 0)
 
-beq 0
-jmp 0 #testing comment
-bne 1
-jmp 0
 out 0
-jmp 0d8 #8
-
-out 10
+out 204#testing comment
+beq 204
 jmp 0
+out 257
 
-blt 3
-jmp 8
-bge 0
-jmp 8
-out 1
-jmp 0
+out 170
+beq 170
+jmp 5 #8
+out 256
+jmp 1

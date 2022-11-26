@@ -116,9 +116,9 @@ int main(int argc, char** argv)
 
                     if(instruction == "out")
                     {
-                        if(processed_data > 0b111111111111111)
+                        if(processed_data > 0b11111111111111)
                         {
-                            throw runtime_error("Output data is over the 15 bit limit at line ");
+                            throw runtime_error("Output data is over the 14 bit limit at line ");
                         }
                         ofile << "\t" << index << "\t:\t" << processed_data << ";\n";
                         index++;
@@ -134,40 +134,11 @@ int main(int argc, char** argv)
                     }
                     else if(instruction == "beq")
                     {
-                        if(processed_data > 0b111111111111)
+                        if(processed_data > 0b11111111)
                         {
-                            throw runtime_error("Operand data is over the 12 bit limit at line");
+                            throw runtime_error("Comparison data is over the 8 bit limit at line ");
                         }
-                        ofile << "\t" << index << "\t:\t" << (0b1000*0b1000000000000)+processed_data << ";\n";
-                        index++;
-                    }
-                    else if(instruction == "bne")
-                    {
-                        if(processed_data > 0b111111111111)
-                        {
-                            throw runtime_error("Operand data is over the 12 bit limit at line ");
-                        }
-                        ofile << "\t" << index << "\t:\t" << (0b1001*0b1000000000000)+processed_data << ";\n";
-                        index++;
-                        
-                    }
-                    else if(instruction == "blt")
-                    {
-                        if(processed_data > 0b111111111111)
-                        {
-                            throw runtime_error("Operand data is over the 12 bit limit at line ");
-                        }
-                        ofile << "\t" << index << "\t:\t" << (0b1010*0b1000000000000)+processed_data << ";\n";
-                        index++;
-                        
-                    }
-                    else if(instruction == "bge")
-                    {
-                        if(processed_data > 0b111111111111)
-                        {
-                            throw runtime_error("Operand data is over the 12 bit limit at line ");
-                        }
-                        ofile << "\t" << index << "\t:\t" << (0b1011*0b1000000000000)+processed_data << ";\n";
+                        ofile << "\t" << index << "\t:\t" << ((0b10*0b100000000)+processed_data)*0b1000000 << ";\n";
                         index++;
                     }
                     else
