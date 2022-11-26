@@ -1,9 +1,9 @@
 module spi_output (
-	input mosi;
-	input ss;
-	input sck;
+	input mosi,
+	input ss,
+	input sck,
 	
-	output [7:0] dout;
+	output [7:0] dout
 	);
 
 	reg [7:0] shift_dout = 8'b0;

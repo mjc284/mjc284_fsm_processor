@@ -1,14 +1,16 @@
 module fsm_processor(
 	input clk,
 	output clk_ram,
-	input cmp,
-	output data,
-	output data_clk,
-	output [3:0] test,
-	output test2
+	input miso,
+	output mosi,
+	output sck,
+	output [5:0] ss
+	//output [3:0] test
 );
 	
 	wire [2:0] state;
+	//assign test[2:0] = state;///////////////////
+	//assign test[3] = clk;
 	
 	reg [1:0] opcode;
 	wire op_clk = !state[2]&!state[1]&!state[0]&!clk /* synthesis keep */;
@@ -45,24 +47,45 @@ module fsm_processor(
  		.out(rst)
 	);
 	
-	assign data_clk = !state[2]&!state[1]&state[0]&!clk;
-	/*
-	reg [15:0] reg_data = 16'b0;
-	always @(posedge data_clk) begin
-		reg_data <= {reg_data[14:0], dout};
+	reg reg_sck = 1'b0;
+	wire sck_ctrl = state[2]&!state[1]&state[0] | state[2]&state[1]&!state[0];
+	always @(negedge clk)
+		reg_sck <= sck_ctrl;
+	assign sck = sck_ctrl&reg_sck&!clk;
+	
+	wire ss_clk = !state[2]&!state[1]&state[0]&!clk;
+	reg [5:0] reg_ss = 6'b0;
+	always @(posedge ss_clk) begin
+		reg_ss <= {reg_ss[4:0], dout};
 	end
-	*/
+	assign ss = reg_ss;
+	
+	wire cmp_ctrl = state[2]&state[1];
+	wire reg_cmp_ctrl = !(state[2]&state[1]&state[0])&!clk;
+	
+	reg reg_miso = 1'b0;
+	always @(posedge clk)
+		reg_miso <= miso;
+	wire pre_cmp = !(reg_miso^dout)&cmp&cmp_ctrl | !cmp_ctrl;
+	reg reg_cmp = 1'b1;
+	always @(posedge reg_cmp_ctrl)
+		reg_cmp <=  pre_cmp;
+	assign cmp = reg_cmp;
+	
+	assign mosi = !cmp_ctrl&dout;
 	
 	reg drshft = 1'b0;
 	always @(negedge clk) begin
 		drshft <= !(state[2]&!state[1]&!state[0]);
 	end
 	
+	
+	wire arclk_ctrl = !state[2]&state[1] | state[2]&state[1]&state[0];
 	reg reg_arclk = 1'b0;
 	always @(negedge clk)
-		reg_arclk <= !state[2]&state[1];
-		
-	wire arclk = reg_arclk & !clk /* synthesis keep */;
+		reg_arclk <= arclk_ctrl;
+	wire arclk = arclk_ctrl&reg_arclk&!clk /* synthesis keep */;
+	
 	
 	reg init = 1'b0; 
 	always @(posedge drshft)
@@ -84,7 +107,6 @@ module fsm_processor(
 	
 	wire ardin = dout & init;
 
-	//wire clk_ram;
 	ram Ram(
 		.arclk(arclk),
 		.ardin(ardin),
@@ -105,6 +127,6 @@ module fsm_processor(
 endmodule
 
 /*
-Resource Usage: 26 LE (all other stuff) + 16 LE (reg_dout) = 42 LE
+Resource Usage: 42 LE
 					 1 Block-ram
 */

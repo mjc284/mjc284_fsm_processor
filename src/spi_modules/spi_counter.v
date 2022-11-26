@@ -1,9 +1,9 @@
 module spi_counter (
-	input mosi;
-	output miso;
-	input ss1;
-	input ss2;
-	input sck;
+	input mosi,
+	output miso,
+	input ss1,
+	input ss2,
+	input sck
 	);
 	
 	wire clk1 = !ss1&sck;

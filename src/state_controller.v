@@ -11,9 +11,9 @@ module state_controller(
     reg [2:0] states = 3'd3;
 
     always @(posedge clk) begin
-        states[2] <= !states[2]&states[1];
-        states[1] <= !states[2]&!states[1]&states[0] | !states[2]&!states[1]&in1&in2;
-        states[0] <= !states[2]&!states[1]&!states[0];
+		states[2] <= !states[2]&in2&!in1 | !states[2]&states[0] | states[1];
+		states[1] <= !states[2]&!states[1]&!states[0]&in2 | states[2]&!states[1]&states[0] | states[2]&states[1]&!states[0];
+		states[0] <= !states[2]&!states[1]&!in2 | !states[2]&!states[1]&in1 | !states[2]&!states[1]&states[0] | states[2]&states[1]&!states[0];
     end
 
     assign out = states;
