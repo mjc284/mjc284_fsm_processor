@@ -1,6 +1,6 @@
 /* Sample program to 
 Test the compiler */
-
+/*
 define echo = 0; //Testing comment
 define led = 1;
 
@@ -10,7 +10,7 @@ define b = 0b10101010;
 state light
 {
     out(echo, a);
-    if(in(a))
+    if(a)
     {
         light;
     }
@@ -20,7 +20,7 @@ state light
 state unlight
 {
     out(echo, b);
-    if(in(b))
+    if(b)
     {
         unlight;
     }
@@ -35,5 +35,26 @@ state main
         unlight;
     goto loop;
 }
+*/
 
+state main
+{
+    out(0,4);
+    if(3)
+    {
+        out(0,3);
+        if(5)
+        {
+            out(0,15);
+        }
+    }
+    elif(5)
+    {
+        out(0,5);
+    }
+    else
+    {
+        out(0,4);
+    }
+}
 

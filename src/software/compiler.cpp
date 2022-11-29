@@ -92,6 +92,7 @@ int main(int argc, char** argv)
     vector <string> line;
     vector <vector<string>> lines;
     string tmp = "";
+    int curly_brace = 0;
     while(ifile.get(c))
     {
         if(is_comment2 == 0)
@@ -132,9 +133,17 @@ int main(int argc, char** argv)
         }
         old_c = c;
     }
-
+/*
+    for(int i = 0; i < lines.size(); i++)
+        {
+            for(int j = 0; j < lines[i].size(); j++)
+            {
+                cout << lines[i][j] << endl;
+            }
+        }
+*/
     //int instruction_type = 0; //0 = No instruction, 1 = Define, 2 = State 
-    int curly_brace = 0;
+    curly_brace = 0;
     int parenthesis = 0;
     int index = 0;
     string token;
@@ -159,8 +168,10 @@ int main(int argc, char** argv)
     vector<short> addresses;
     int replace_index = 0;
     vector<short> replace_value;
+    vector<short> replace_value2;
     bool reading = 0;
     bool prev_if = 0;
+    vector<pair<string, short>> tmp_instruction;
 
     int tmp_int;
     try
@@ -196,7 +207,7 @@ int main(int argc, char** argv)
                             //Throw error
                         }
                         instruction_type.push_back(2);
-                        indexes.push_back(3);
+                        indexes.push_back(2);
                         reading = 1;
                         continue;
                     }
@@ -218,7 +229,7 @@ int main(int argc, char** argv)
                             //Throw error
                         }
                         instruction_type.push_back(4);
-                        indexes.push_back(7);
+                        indexes.push_back(4);
                         reading = 1;
                         continue;
                     }
@@ -229,7 +240,18 @@ int main(int argc, char** argv)
                             //Throw error
                         }
                         instruction_type.push_back(5);
-                        indexes.push_back(2);
+                        indexes.push_back(1);
+                        reading = 1;
+                        continue;
+                    }
+                    else if(token == "elif")
+                    {
+                        if(instruction_type.size() == 0)
+                        {
+                            //Throw error
+                        }
+                        instruction_type.push_back(6);
+                        indexes.push_back(4);
                         reading = 1;
                         continue;
                     }
@@ -239,7 +261,7 @@ int main(int argc, char** argv)
                         {
                             //Throw error
                         }
-                        instruction_type.push_back(6);
+                        instruction_type.push_back(7);
                         indexes.push_back(2);
                         reading = 1;
                         continue;
@@ -250,17 +272,16 @@ int main(int argc, char** argv)
                         {
                             //Throw error
                         }
-                        instruction_type.push_back(7);
+                        instruction_type.push_back(8);
                         indexes.push_back(7);
                         reading = 1;
                         continue;
                     }
                     else if(token == "}")
                     {
-                        instruction_type.push_back(8);
-                        indexes.push_back(2);
+                        instruction_type.push_back(9);
+                        indexes.push_back(1);
                         reading = 1;
-                        continue;
                     }
                     else
                     {
@@ -270,7 +291,7 @@ int main(int argc, char** argv)
                             {
                                 //Throw error
                             }
-                            instruction_type.push_back(8);
+                            instruction_type.push_back(10);
                             indexes.push_back(1);
                             continue;
                         }
@@ -280,7 +301,7 @@ int main(int argc, char** argv)
                         }
                     }
                 }
-                else
+                if(reading == 1)
                 {
                     if(instruction_type.size() == 0)
                     {
@@ -363,7 +384,7 @@ int main(int argc, char** argv)
                     }
                     else if(instruction_type.back() == 2) //state
                     {
-                        if(indexes.back() == 3)
+                        if(indexes.back() == 2)
                         {
                             if(is_keyword(token))
                             {
@@ -376,24 +397,13 @@ int main(int argc, char** argv)
                                 //Throw error
                             }
                         }
-                        if(indexes.back() == 2)
+                        if(indexes.back() == 1)
                         {
                             if(token != "{")
                             {
                                 //Throw error
                             }
                             reading = 0;
-                        }
-                        if(indexes.back() == 1)
-                        {
-                            if(token != "}")
-                            {
-                                //Throw error
-                            }
-                            instruction_type.pop_back();
-                            reading = 0;
-                            it2 = instructions.end();
-                            instructions.insert(it2, pair<string, vector<pair<string, short>>>(tmp_state ,tmp_instructions));
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
@@ -485,28 +495,14 @@ int main(int argc, char** argv)
                     }
                     else if(instruction_type.back() == 4) //if
                     {
-                        if(indexes.back() == 7)
-                        {
-                            if(token != "(")
-                            {
-                                //throw error
-                            }
-                        }
-                        if(indexes.back() == 6)
-                        {
-                            if(token != "in")
-                            {
-                                //throw error
-                            }
-                        }
-                        if(indexes.back() == 5)
-                        {
-                            if(token != "(")
-                            {
-                                //throw error
-                            }
-                        }
                         if(indexes.back() == 4)
+                        {
+                            if(token != "(")
+                            {
+                                //throw error
+                            }
+                        }
+                        if(indexes.back() == 3)
                         {
                             if(is_number(token))
                             {
@@ -531,13 +527,6 @@ int main(int argc, char** argv)
                                 //throw error
                             }
                         }
-                        if(indexes.back() == 3)
-                        {
-                            if(token != ")")
-                            {
-                                //throw error
-                            }
-                        }
                         if(indexes.back() == 2)
                         {
                             if(token != ")")
@@ -552,34 +541,80 @@ int main(int argc, char** argv)
                                 //throw error
                             }
                             reading = 0;
-                            replace_index++;
+                            prev_if = 1;
                             tmp_instructions.push_back(pair<string, short>("", tmp_int));
-                            tmp_instructions.push_back(pair<string, short>(to_string(replace_index) + "0", 0));
+                            tmp_instructions.push_back(pair<string, short>(to_string(replace_index), 0));
                             replace_value.push_back(replace_index);
                             tmp_int = 0;
+                            replace_index++;
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
                     }
                     else if(instruction_type.back() == 5) //else
                     {
-                        if(indexes.back() == 2)
+                        if(indexes.back() == 1)
                         {
-                            if(token != "if")
+                            if(prev_if == 0)
                             {
-                                if(token == "{")
-                                {
-                                    indexes.back() = 1;
-
-                                }
-                                else
+                                //throw error
+                            }
+                            if(token != "{")
+                            {
+                                //throw error
+                            }
+                            reading = 0;
+                            tmp_instruction.push_back(tmp_instructions.back());
+                            tmp_instructions.pop_back();
+                            tmp_int = 0;
+                            prev_if = 0;
+                        }
+                        indexes.back()--;
+                        if(indexes.back() == 0){indexes.pop_back();}
+                    }
+                    else if(instruction_type.back() == 6) //elif
+                    {
+                        if(indexes.back() == 4)
+                        {
+                            if(prev_if == 0)
+                            {
+                                //throw error
+                            }
+                            if(token != "(")
+                            {
+                                //throw error
+                            }
+                        }
+                        if(indexes.back() == 3)
+                        {
+                            if(is_number(token))
+                            {
+                                tmp_int = stoi(token);
+                                if(tmp_int > 0b11111111)
                                 {
                                     //throw error
                                 }
+                                tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                            }
+                            else if(variables.find(token) != variables.end())
+                            {
+                                tmp_int = variables[token];
+                                if(tmp_int > 0b11111111)
+                                {
+                                    //throw error
+                                }
+                                tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
                             else
                             {
-
+                                //throw error
+                            }
+                        }
+                        if(indexes.back() == 2)
+                        {
+                            if(token != ")")
+                            {
+                                //throw error
                             }
                         }
                         if(indexes.back() == 1)
@@ -589,20 +624,63 @@ int main(int argc, char** argv)
                                 //throw error
                             }
                             reading = 0;
-                            tmp_instructions.push_back(pair<string, short>(to_string(replace_index) + "1", 0));
+                            tmp_instruction.push_back(tmp_instructions.back());
+                            tmp_instructions.pop_back();
+                            tmp_instructions.push_back(pair<string, short>("", tmp_int));
+                            tmp_instructions.push_back(pair<string, short>(to_string(replace_index), 0));
                             replace_value.push_back(replace_index);
                             tmp_int = 0;
+                            replace_index++;
+                            tmp_int = 0;
                         }
-
-                        index2--;
+                        indexes.back()--;
+                        if(indexes.back() == 0){indexes.pop_back();}
                     }
-                    else if(instruction_type2 == 4)
+                    else if(instruction_type.back() == 9)
                     {
-                        index2--;
+                        instruction_type.pop_back();
+                        if(instruction_type.back() == 2)//state
+                        {
+                            instruction_type.pop_back();
+                            it2 = instructions.end();
+                            instructions.insert(it2, pair<string, vector<pair<string, short>>>(tmp_state ,tmp_instructions));
+                        }
+                        else if(instruction_type.back() == 4)//if
+                        {
+                            instruction_type.pop_back();
+                            tmp_instructions.push_back(pair<string, short>(to_string(replace_index), 0));
+                            tmp_instructions.push_back(pair<string, short>(" " + to_string(replace_value.back()), 0));
+                            tmp_instructions.push_back(pair<string, short>(" " + to_string(replace_index), 0));
+                            replace_index++;
+                            replace_value.pop_back();
+                            reading = 0;
+
+                        }
+                        else if(instruction_type.back() == 5)//else
+                        {
+                            instruction_type.pop_back();
+                            tmp_instructions.push_back(tmp_instruction.back());
+                            tmp_instruction.pop_back();
+                        }
+                        else if(instruction_type.back() == 6)//elif
+                        {
+                            instruction_type.pop_back();
+
+                            tmp_instructions.push_back(pair<string, short>(tmp_instruction.back().first.substr(1), 0));
+                            tmp_instructions.push_back(pair<string, short>(" " + to_string(replace_value.back()), 0));
+                            tmp_instructions.push_back(tmp_instruction.back());
+                            tmp_instruction.pop_back();
+                        }
+                        reading = 0;
+                        indexes.back()--;
+                        if(indexes.back() == 0){indexes.pop_back();}
                     }
-                    if(index2 == 0){instruction_type2 = 0;}
+                    else
+                    {
+                        /* throw error */
+                    }
                 }
-                }
+                
             }
         }
     }
@@ -618,7 +696,7 @@ int main(int argc, char** argv)
     {
         for(int i = 0; i < it2->second.size(); i++)
         {
-            cout << it2->first << it2->second[i].second << "\n";
+            cout << it2->first << " " << it2->second[i].first << " " << it2->second[i].second << "\n";
         }
     }
 
