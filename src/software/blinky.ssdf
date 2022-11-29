@@ -37,24 +37,18 @@ state main
 }
 */
 
+state hiyahoo
+{
+    out(0,1);
+    out(0,2);
+    out(0,3);
+    out(0,4);
+}
+
+
 state main
 {
-    out(0,4);
-    if(3)
-    {
-        out(0,3);
-        if(5)
-        {
-            out(0,15);
-        }
-    }
-    elif(5)
-    {
-        out(0,5);
-    }
-    else
-    {
-        out(0,4);
-    }
+    define pipe = 3;
+    hiyahoo;
 }
 
