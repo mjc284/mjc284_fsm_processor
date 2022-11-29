@@ -1,0 +1,39 @@
+/* Sample program to 
+Test the compiler */
+
+define echo = 0; //Testing comment
+define led = 1;
+
+define a = 204;
+define b = 0b10101010;
+
+state light
+{
+    out(echo, a);
+    if(in(a))
+    {
+        light;
+    }
+    out(led, 1);
+}
+
+state unlight
+{
+    out(echo, b);
+    if(in(b))
+    {
+        unlight;
+    }
+    else{out(led, 0);}
+}
+
+state main
+{
+    out(0, 0);
+    loop:
+        light;
+        unlight;
+    goto loop;
+}
+
+

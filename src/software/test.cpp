@@ -14,13 +14,16 @@ bool is_scalphabet(string str)
     return (str.find_first_not_of("abcdefghijklmnopqrstuvwxyz") == string::npos);
 }
 
+class State
+{
+    int instruction_length;
 
+};
 
 
 
 int main(int argc, char** argv)
 {
-    string s = "1101";
-    cout << s.substr(2. 1);
+    a[3][2]={}
 
 }
