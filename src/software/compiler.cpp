@@ -912,7 +912,7 @@ int main(int argc, char** argv)
             {
                 if(processed_instructions[i].first[0] != ' ')
                 {
-                    raw = (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000;
+                    raw = (0b11*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000;
                     binary[0] = char(raw&0b0000000011111111);
                     binary[1] = char((raw&0b1111111100000000)/0b100000000);
                     ofile.write (binary, 2);
