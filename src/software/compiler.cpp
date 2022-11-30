@@ -904,25 +904,36 @@ int main(int argc, char** argv)
             cout << processed_instructions[i].first << "/" << processed_instructions[i].second << "\n";
         }
 */
-
+        char binary[2];
+        short raw;
         for(int i = 0; i < processed_instructions.size(); i++)
         {
             if(processed_instructions[i].first != "")
             {
                 if(processed_instructions[i].first[0] != ' ')
                 {
-                    ofile << (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000 << endl;
+                    raw = (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000;
+                    binary[0] = char(raw&0b0000000011111111);
+                    binary[1] = char((raw&0b1111111100000000)/0b100000000);
+                    ofile.write (binary, 2);
                     num_instructions++;
                 }
             }
             else
             {
-                ofile << processed_instructions[i].second << endl;
+                raw = processed_instructions[i].second;
+                binary[0] = char(raw&0b0000000011111111);
+                binary[1] = char((raw&0b1111111100000000)/0b100000000);
+                ofile.write (binary, 2);
                 num_instructions++;
             }
         }
+    }
 
-
+    if(num_instructions > 512)
+    {
+        cerr << "Program exceeds 512 instructions.";
+        error = 1;
     }
 
     cout << "\n\n";
