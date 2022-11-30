@@ -93,7 +93,10 @@ int main(int argc, char** argv)
     vector <string> line;
     vector <vector<string>> lines;
     string tmp = "";
+    string old_tmp = "";
     int curly_brace = 0;
+    vector <string> state_names;
+    vector <string> label_names;
     while(ifile.get(c))
     {
         if(is_comment2 == 0)
@@ -118,9 +121,23 @@ int main(int argc, char** argv)
                 is_token = 0;
                 num_token++;
                 line.push_back(tmp);
+
+                if(old_tmp == "state")
+                {
+                    state_names.push_back(tmp);
+                }
+                old_tmp = tmp;
                 tmp = "";
             }
-            if(is_special_token(c)){num_token++; line.push_back(string(1, c));}
+            if(is_special_token(c))
+            {
+                num_token++; 
+                line.push_back(string(1, c));
+                if(c == ':')
+                {
+                    label_names.push_back(old_tmp);
+                }
+            }
 
             if(is_token == 1)
             {
@@ -134,15 +151,8 @@ int main(int argc, char** argv)
         }
         old_c = c;
     }
-/*
-    for(int i = 0; i < lines.size(); i++)
-        {
-            for(int j = 0; j < lines[i].size(); j++)
-            {
-                cout << lines[i][j] << endl;
-            }
-        }
-*/
+
+
     //int instruction_type = 0; //0 = No instruction, 1 = Define, 2 = State 
     curly_brace = 0;
     int parenthesis = 0;
@@ -175,6 +185,8 @@ int main(int argc, char** argv)
     vector<pair<string, short>> tmp_instruction;
     vector<string> labels;
 
+    bool error = 0;
+
     int tmp_int;
     try
     {
@@ -206,7 +218,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() != 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'state' can only be declared outside a state at line", i);
                         }
                         instruction_type.push_back(2);
                         indexes.push_back(2);
@@ -217,7 +229,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'out' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(3);
                         indexes.push_back(6);
@@ -228,7 +240,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'if' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(4);
                         indexes.push_back(4);
@@ -239,7 +251,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'else' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(5);
                         indexes.push_back(1);
@@ -250,7 +262,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'elif' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(6);
                         indexes.push_back(4);
@@ -261,7 +273,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'goto' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(7);
                         indexes.push_back(2);
@@ -272,7 +284,7 @@ int main(int argc, char** argv)
                     {
                         if(instruction_type.size() == 0)
                         {
-                            //Throw error
+                            throw pair<string, int>("'while' can only be declared inside a state at line", i);
                         }
                         instruction_type.push_back(8);
                         indexes.push_back(4);
@@ -287,11 +299,15 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                        if(instructions.find(token) != instructions.end())
+                        if(find(state_names.begin(), state_names.end(), token) != state_names.end())
                         {
                             if(instruction_type.size() == 0)
                             {
-                                //Throw error
+                                throw pair<string, int>("States can only be called inside a state at line", i);
+                            }
+                            if(find(state_names.begin(), state_names.end(), token) == state_names.end())
+                            {
+                                throw pair<string, int>("State does not exist at line", i);
                             }
                             instruction_type.push_back(10);
                             indexes.push_back(1);
@@ -299,11 +315,11 @@ int main(int argc, char** argv)
                             tmp_instructions.push_back(pair<string, short>(":" + token, 0));
                             continue;
                         }
-                        else if((!is_keyword(token)) and (find(labels.begin(), labels.end(), token) == labels.end()))
+                        else if((!is_keyword(token)) and (find(label_names.begin(), label_names.end(), token) == label_names.end()))
                         {
                             if(instruction_type.size() == 0)
                             {
-                                //Throw error
+                                throw pair<string, int>("Invalid command at line", i);
                             }
                             labels.push_back(token);
                             instruction_type.push_back(11);
@@ -323,7 +339,7 @@ int main(int argc, char** argv)
                     {
                         if((token != "define") or (token != "state"))
                         {
-                            //throw error
+                            throw pair<string, int>("Invalid command at line", i);
                         }
                     }
                     else if(instruction_type.back() == 1) //define
@@ -332,23 +348,23 @@ int main(int argc, char** argv)
                         {
                             if(is_keyword(token))
                             {
-                                //Throw error
+                                throw pair<string, int>("Variable name cannot be a system keyword at line", i);
                             }
                             if(is_number(token))
                             {
-                                //throw error
+                                throw pair<string, int>("Variable name cannot be a number at line", i);
                             }
                             tmp_variable = token;
                             if(variables.find(tmp_variable) != variables.end())
                             {
-                                //Throw error
+                                throw pair<string, int>("Variable name already exists at line", i);
                             }
                         }
                         else if(indexes.back() == 3)
                         {
                             if(token != "=")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         else if(indexes.back() == 2)
@@ -360,19 +376,19 @@ int main(int argc, char** argv)
                                     token = token.substr(2);
                                     tmp_value = stoi(token, nullptr, 2);
                                 }
-                                if(token.substr(0, 2) == "0x")
+                                else if(token.substr(0, 2) == "0x")
                                 {
                                     token = token.substr(2);
                                     tmp_value = stoi(token, nullptr, 16);
                                 }
-                                if(token.substr(0, 2) == "0d")
+                                else if(token.substr(0, 2) == "0d")
                                 {
                                     token = token.substr(2);
                                     tmp_value = stoi(token, nullptr, 10);
                                 }
                                 else
                                 {
-                                //throw error 
+                                    throw pair<string, int>("Invalid number format at line", i);
                                 }
                             }
                             else
@@ -384,16 +400,12 @@ int main(int argc, char** argv)
                         {
                             if(token != ";")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             instruction_type.pop_back();
                             reading = 0;
                             it = variables.end();
                             variables.insert(it, pair<string, int>(tmp_variable, tmp_value));
-                        }
-                        else
-                        {
-                            //throw error
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
@@ -404,21 +416,21 @@ int main(int argc, char** argv)
                         {
                             if(is_keyword(token))
                             {
-                                //Throw error
+                                throw pair<string, int>("State name cannot be a system keyword at line", i);
                             }
                             tmp_state = token;
                             tmp_instructions.clear();
                             tmp_instructions.push_back(pair<string, short>(" " + token, 0));
                             if(instructions.find(tmp_state) != instructions.end())
                             {
-                                //Throw error
+                                throw pair<string, int>("State name already exists at line", i);
                             }
                         }
                         if(indexes.back() == 1)
                         {
                             if(token != "{")
                             {
-                                //Throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                         }
@@ -431,7 +443,7 @@ int main(int argc, char** argv)
                         {
                             if(token != "(")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         else if(indexes.back() == 5)
@@ -441,7 +453,7 @@ int main(int argc, char** argv)
                                 tmp_int = stoi(token);
                                 if(tmp_int > 0b111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Output address exceeds 6-bit limit at line", i);
                                 }
                                 tmp_int = tmp_int*0b100000000;
                             }
@@ -450,20 +462,20 @@ int main(int argc, char** argv)
                                 tmp_int = variables[token];
                                 if(tmp_int > 0b111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Output address exceeds 6-bit limit at line", i);
                                 }
                                 tmp_int = tmp_int*0b100000000;
                             }
                             else
                             {
-                                //throw error
+                                throw pair<string, int>("Variable does not exist at line", i);
                             }
                         }
                         else if(indexes.back() == 4)
                         {
                             if(token != ",")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         else if(indexes.back() == 3)
@@ -472,7 +484,7 @@ int main(int argc, char** argv)
                             {
                                 if(stoi(token) > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Output data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int += stoi(token);
                             }
@@ -480,27 +492,27 @@ int main(int argc, char** argv)
                             {
                                 if(variables[token] > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Output data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int += variables[token];
                             }
                             else
                             {
-                                //throw error
+                                throw pair<string, int>("Variable does not exist at line", i);
                             }
                         }
                         else if(indexes.back() == 2)
                         {
                             if(token != ")")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         else if(indexes.back() == 1)
                         {
                             if(token != ";")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             instruction_type.pop_back();
                             reading = 0;
@@ -516,7 +528,7 @@ int main(int argc, char** argv)
                         {
                             if(token != "(")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 3)
@@ -526,7 +538,7 @@ int main(int argc, char** argv)
                                 tmp_int = stoi(token);
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
@@ -535,27 +547,27 @@ int main(int argc, char** argv)
                                 tmp_int = variables[token];
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
                             else
                             {
-                                //throw error
+                                throw pair<string, int>("Variable does not exist at line", i);
                             }
                         }
                         if(indexes.back() == 2)
                         {
                             if(token != ")")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 1)
                         {
                             if(token != "{")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             prev_if = 1;
@@ -574,11 +586,11 @@ int main(int argc, char** argv)
                         {
                             if(prev_if == 0)
                             {
-                                //throw error
+                                throw pair<string, int>("'else' must be called after 'if' at line", i);
                             }
                             if(token != "{")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             tmp_instruction.push_back(tmp_instructions.back());
@@ -595,11 +607,11 @@ int main(int argc, char** argv)
                         {
                             if(prev_if == 0)
                             {
-                                //throw error
+                                throw pair<string, int>("'elif' must be called after 'if' at line", i);
                             }
                             if(token != "(")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 3)
@@ -609,7 +621,7 @@ int main(int argc, char** argv)
                                 tmp_int = stoi(token);
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
@@ -618,27 +630,27 @@ int main(int argc, char** argv)
                                 tmp_int = variables[token];
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
                             else
                             {
-                                //throw error
+                                throw pair<string, int>("Variable does not exist at line", i);
                             }
                         }
                         if(indexes.back() == 2)
                         {
                             if(token != ")")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 1)
                         {
                             if(token != "{")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             tmp_instruction.push_back(tmp_instructions.back());
@@ -656,9 +668,9 @@ int main(int argc, char** argv)
                     {
                         if(indexes.back() == 2)
                         {
-                            if(find(labels.begin(), labels.end(), token) == labels.end())
+                            if((find(label_names.begin(), label_names.end(), token) == label_names.end()) and (find(state_names.begin(), state_names.end(), token) == state_names.end()))
                             {
-                                //throw error
+                                throw pair<string, int>("Target label or state does not exist at line", i);
                             }
                             tmp_instructions.push_back(pair<string, short>(token, 0));
                         }
@@ -666,7 +678,7 @@ int main(int argc, char** argv)
                         {
                             if(token != ";")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             instruction_type.pop_back();
@@ -680,7 +692,7 @@ int main(int argc, char** argv)
                         {
                             if(token != "(")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 3)
@@ -690,7 +702,7 @@ int main(int argc, char** argv)
                                 tmp_int = stoi(token);
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
@@ -699,27 +711,27 @@ int main(int argc, char** argv)
                                 tmp_int = variables[token];
                                 if(tmp_int > 0b11111111)
                                 {
-                                    //throw error
+                                    throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
                                 }
                                 tmp_int = (0b10*100000000+tmp_int)*0b1000000;
                             }
                             else
                             {
-                                //throw error
+                                throw pair<string, int>("Variable does not exist at line", i);
                             }
                         }
                         if(indexes.back() == 2)
                         {
                             if(token != ")")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                         }
                         if(indexes.back() == 1)
                         {
                             if(token != "{")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             tmp_instructions.push_back(pair<string, short>(" " + to_string(replace_index), 0));
@@ -740,7 +752,7 @@ int main(int argc, char** argv)
                         {
                             if(token != ":")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
                             tmp_instructions.push_back(pair<string, short>(" " + labels.back(), 0));
@@ -755,7 +767,7 @@ int main(int argc, char** argv)
                         {
                             if(token != ";")
                             {
-                                //throw error
+                                throw pair<string, int>("Syntax error at line", i);
                             }
 
                             reading = 0;
@@ -812,7 +824,7 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                        /* throw error */
+                       throw pair<string, int>("Fatal error at line", i);
                     }
                 }
                 
@@ -827,18 +839,98 @@ int main(int argc, char** argv)
             cerr << lines[e.second][k] << " ";
         }
         cerr << "\n\n";
+        error = 1;
     }
-    
-    
 
-
-    for(it2 = instructions.begin(); it2 != instructions.end(); ++it2)
+/*
+    for(it2 = instructions.begin(); it2 != instructions.end(); it2++)
     {
+        cout << ">>>";
         for(int i = 0; i < it2->second.size(); i++)
         {
             cout << it2->first << "/" << it2->second[i].first << "/" << it2->second[i].second << "\n";
         }
+    }*/
+    vector<pair<string, short>> processed_instructions;
+    if(!error)
+    {
+        it2 = instructions.find("main");
+        if(it2 == instructions.end())
+        {
+            cerr << "State 'main' does not exist.\n\n";
+        }
+        processed_instructions.insert(processed_instructions.end(), it2->second.begin(), it2->second.end());
     }
+
+    map<string, vector<pair<string, short>>>::iterator it3;
+    map<string, short> final_addresses;
+    int cnt = 0;
+    if(!error)
+    {
+        for(it3 = instructions.begin(); it3 != instructions.end(); it3++)
+        {
+            if(it3 != it2)
+            {
+                processed_instructions.insert(processed_instructions.end(), it3->second.begin(), it3->second.end());
+            }
+        }
+
+        for(int i = 0; i < processed_instructions.size(); i++)
+        {
+            cout << processed_instructions[i].first << "/" << processed_instructions[i].second << "\n";
+        }
+        cout << "\n\n\n";
+
+        for(int i = 0; i < processed_instructions.size(); i++)
+        {
+            if(processed_instructions[i].first != "")
+            {
+                if(processed_instructions[i].first[0] == ' ')
+                {
+                    final_addresses.insert(pair<string, short>(processed_instructions[i].first.substr(1), cnt));
+                }
+            }
+            else{cnt++;}
+        }
+
+        for(int i = 0; i < processed_instructions.size(); i++)
+        {
+            if(processed_instructions[i].first != "")
+            {
+                if(processed_instructions[i].first[0] == ':')
+                {
+
+                }
+                else if(processed_instructions[i].first[0] != ' ')
+                {
+                    cout << (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000 << endl;
+                }
+            }
+            else
+            {
+                cout << processed_instructions[i].second << endl;
+            }
+        }
+    }
+
+    cout << "\n\n";
+/*
+    for(map<string, short>::iterator i = final_addresses.begin(); i != final_addresses.end(); i++)
+        {
+            cout << i->first << "/" << i->second << endl;
+        }
+*/
+
+    if(error)
+    {
+        cerr << "Compilation failed due to previous errors.\n\n";
+        exit(0);
+    }
+
+    
+
+
+    
 
 
 }

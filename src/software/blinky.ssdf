@@ -1,6 +1,6 @@
 /* Sample program to 
 Test the compiler */
-/*
+
 define echo = 0; //Testing comment
 define led = 1;
 
@@ -12,9 +12,10 @@ state light
     out(echo, a);
     if(a)
     {
-        light;
+        goto light;
     }
     out(led, 1);
+    goto return1;
 }
 
 state unlight
@@ -22,25 +23,29 @@ state unlight
     out(echo, b);
     if(b)
     {
-        unlight;
+        goto unlight;
     }
     else{out(led, 0);}
+    goto return2;
 }
 
 state main
 {
     out(0, 0);
     loop:
-        light;
+        goto light;
+    return1:
         unlight;
+    return2:
     goto loop;
 }
-*/
 
+/*
 state hiyahoo
 {
     out(0,1);
     out(0,2);
+    poopoo:
     out(0,3);
     out(0,4);
 }
@@ -48,7 +53,8 @@ state hiyahoo
 
 state main
 {
-    define pipe = 3;
     hiyahoo;
-}
 
+    pokie:
+}
+*/
