@@ -1,6 +1,6 @@
 /* Sample program to 
 Test the compiler */
-
+/*
 define echo = 0; //Testing comment
 define led = 1;
 
@@ -44,7 +44,7 @@ state main
     return2:
     goto loop;
 }
-
+*/
 /*
 state hiyahoo
 {
@@ -63,3 +63,29 @@ state main
     pokie:
 }
 */
+
+
+state main
+{
+    out(0, 0);
+    loop:
+    loop1:
+    out(0, 0b10000000);
+    if(0xff){}
+    else
+    {
+        goto loop1;
+    }
+    out(2, 1);
+    out(0, 0b11110000);
+    loop2:
+    out(0, 0b10000000);
+    if(0xff){}
+    else
+    {
+        goto loop2;
+    }
+    out(2, 0);
+    out(0, 0b11110000);
+    goto loop;
+}

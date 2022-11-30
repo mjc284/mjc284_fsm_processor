@@ -52,6 +52,11 @@ bool is_number(string str)
     return (str.find_first_not_of("0123456789") == string::npos);
 }
 
+bool is_hex(string str)
+{
+    return (str.find_first_not_of("0123456789abcdefABCDEF") == string::npos);
+}
+
 int main(int argc, char** argv)
 {
     string ifile_path = argv[1];
@@ -475,7 +480,47 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                throw pair<string, int>("Variable does not exist at line", i);
+                                if(is_number(token.substr(2)))
+                                {
+                                    if(token.substr(0, 2) == "0b")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 2);
+                                        if(tmp_int > 0b111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 6-bit limit at line", i);
+                                        }
+                                        tmp_int = tmp_int*0b100000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0x")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 16);
+                                        if(tmp_int > 0b111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 6-bit limit at line", i);
+                                        }
+                                        tmp_int = tmp_int*0b100000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0d")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 10);
+                                        if(tmp_int > 0b111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 6-bit limit at line", i);
+                                        }
+                                        tmp_int = tmp_int*0b100000000;
+                                    }
+                                    else
+                                    {
+                                        throw pair<string, int>("Variable does not exist at line", i);
+                                    }
+                                }
+                                else
+                                {   
+                                    throw pair<string, int>("Variable does not exist at line", i);
+                                }
                             }
                         }
                         else if(indexes.back() == 4)
@@ -487,6 +532,7 @@ int main(int argc, char** argv)
                         }
                         else if(indexes.back() == 3)
                         {
+
                             if(is_number(token))
                             {
                                 if(stoi(token) > 0b11111111)
@@ -505,7 +551,40 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                throw pair<string, int>("Variable does not exist at line", i);
+                                if(is_hex(token.substr(2)))
+                                {
+                                    if(token.substr(0, 2) == "0b")
+                                    {
+                                        token = token.substr(2);
+                                        if(stoi(token, nullptr, 2) > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int += stoi(token, nullptr, 2);
+                                    }
+                                    else if(token.substr(0, 2) == "0x")
+                                    {
+                                        token = token.substr(2);
+                                        if(stoi(token, nullptr, 16) > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int += stoi(token, nullptr, 16);
+                                    }
+                                    else if(token.substr(0, 2) == "0d")
+                                    {
+                                        token = token.substr(2);
+                                        if(stoi(token, nullptr, 10) > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Output address exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int += stoi(token, nullptr, 10);
+                                    }
+                                }
+                                else
+                                {   
+                                    throw pair<string, int>("Variable does not exist at line", i);
+                                }
                             }
                         }
                         else if(indexes.back() == 2)
@@ -560,7 +639,43 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                throw pair<string, int>("Variable does not exist at line", i);
+                                if(is_hex(token.substr(2)))
+                                {
+                                    if(token.substr(0, 2) == "0b")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 2);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0x")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 16);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0d")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 10);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                }
+                                else
+                                {   
+                                    throw pair<string, int>("Variable does not exist at line", i);
+                                }
                             }
                         }
                         if(indexes.back() == 2)
@@ -645,7 +760,43 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                throw pair<string, int>("Variable does not exist at line", i);
+                                if(is_hex(token.substr(2)))
+                                {
+                                    if(token.substr(0, 2) == "0b")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 2);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0x")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 16);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0d")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 10);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                }
+                                else
+                                {   
+                                    throw pair<string, int>("Variable does not exist at line", i);
+                                }
                             }
                         }
                         if(indexes.back() == 2)
@@ -727,7 +878,43 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                throw pair<string, int>("Variable does not exist at line", i);
+                                if(is_hex(token.substr(2)))
+                                {
+                                    if(token.substr(0, 2) == "0b")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 2);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0x")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 16);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                    else if(token.substr(0, 2) == "0d")
+                                    {
+                                        token = token.substr(2);
+                                        tmp_int = stoi(token, nullptr, 10);
+                                        if(tmp_int > 0b11111111)
+                                        {
+                                            throw pair<string, int>("Comparison data exceeds 8-bit limit at line", i);
+                                        }
+                                        tmp_int = (0b10*100000000+tmp_int)*0b1000000;
+                                    }
+                                }
+                                else
+                                {   
+                                    throw pair<string, int>("Variable does not exist at line", i);
+                                }
                             }
                         }
                         if(indexes.back() == 2)
@@ -853,6 +1040,14 @@ int main(int argc, char** argv)
         }
         cerr << "\n\n";
         error = 1;
+    }
+
+    for(it2 = instructions.begin(); it2 != instructions.end(); it2++)
+    {
+        for(int i = 0; i < it2->second.size(); i++)
+        {
+            cout << it2->second[i].first << " " << it2->second[i].second << endl;
+        }
     }
 
     vector<pair<string, short>> processed_instructions;
