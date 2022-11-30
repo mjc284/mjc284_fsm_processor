@@ -117,7 +117,7 @@ module  ram_altufm_none_bgr
 	defparam
 		maxii_ufm_block1.address_width = 9,
 		maxii_ufm_block1.erase_time = 500000000,
-		maxii_ufm_block1.init_file = "mjc284_fsm_processor/src/ram/program.mif",
+		maxii_ufm_block1.init_file = "mjc284_fsm_processor/src/hardware/ram/program.mif",
 		maxii_ufm_block1.osc_sim_setting = 180000,
 		maxii_ufm_block1.program_time = 1600000,
 		maxii_ufm_block1.lpm_type = "maxii_ufm";
