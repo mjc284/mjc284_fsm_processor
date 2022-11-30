@@ -181,9 +181,11 @@ int main(int argc, char** argv)
     vector<short> replace_value;
     vector<short> replace_value2;
     bool reading = 0;
-    bool prev_if = 0;
+    //bool prev_if = 0;
     vector<pair<string, short>> tmp_instruction;
     vector<string> labels;
+    vector<bool> prev_if;
+    prev_if.push_back(0);
 
     bool error = 0;
 
@@ -212,6 +214,7 @@ int main(int argc, char** argv)
                         instruction_type.push_back(1);
                         indexes.push_back(4);
                         reading = 1;
+                        prev_if.back() = 0;
                         continue;
                     }
                     else if(token == "state")
@@ -223,6 +226,7 @@ int main(int argc, char** argv)
                         instruction_type.push_back(2);
                         indexes.push_back(2);
                         reading = 1;
+                        prev_if.back() = 0;
                         continue;
                     }
                     else if(token == "out")
@@ -234,6 +238,7 @@ int main(int argc, char** argv)
                         instruction_type.push_back(3);
                         indexes.push_back(6);
                         reading = 1;
+                        prev_if.back() = 0;
                         continue;
                     }
                     else if(token == "if")
@@ -278,6 +283,7 @@ int main(int argc, char** argv)
                         instruction_type.push_back(7);
                         indexes.push_back(2);
                         reading = 1;
+                        prev_if.back() = 0;
                         continue;
                     }
                     else if(token == "while")
@@ -289,6 +295,7 @@ int main(int argc, char** argv)
                         instruction_type.push_back(8);
                         indexes.push_back(4);
                         reading = 1;
+                        prev_if.back() = 0;
                         continue;
                     }
                     else if(token == "}")
@@ -315,7 +322,7 @@ int main(int argc, char** argv)
                             tmp_instructions.push_back(pair<string, short>(":" + token, 0));
                             continue;
                         }
-                        else if((!is_keyword(token)) and (find(label_names.begin(), label_names.end(), token) == label_names.end()))
+                        else if((!is_keyword(token)) and (find(label_names.begin(), label_names.end(), token) != label_names.end()))
                         {
                             if(instruction_type.size() == 0)
                             {
@@ -570,12 +577,13 @@ int main(int argc, char** argv)
                                 throw pair<string, int>("Syntax error at line", i);
                             }
                             reading = 0;
-                            prev_if = 1;
                             tmp_instructions.push_back(pair<string, short>("", tmp_int));
                             tmp_instructions.push_back(pair<string, short>(to_string(replace_index), 0));
                             replace_value.push_back(replace_index);
                             tmp_int = 0;
                             replace_index++;
+                            prev_if.back() = 1;
+                            prev_if.push_back(0);
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
@@ -584,7 +592,7 @@ int main(int argc, char** argv)
                     {
                         if(indexes.back() == 1)
                         {
-                            if(prev_if == 0)
+                            if(prev_if.back() == 0)
                             {
                                 throw pair<string, int>("'else' must be called after 'if' at line", i);
                             }
@@ -596,7 +604,8 @@ int main(int argc, char** argv)
                             tmp_instruction.push_back(tmp_instructions.back());
                             tmp_instructions.pop_back();
                             tmp_int = 0;
-                            prev_if = 0;
+                            prev_if.back() = 0;
+                            prev_if.push_back(0);
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
@@ -605,7 +614,7 @@ int main(int argc, char** argv)
                     {
                         if(indexes.back() == 4)
                         {
-                            if(prev_if == 0)
+                            if(prev_if.back() == 0)
                             {
                                 throw pair<string, int>("'elif' must be called after 'if' at line", i);
                             }
@@ -660,6 +669,7 @@ int main(int argc, char** argv)
                             replace_value.push_back(replace_index);
                             tmp_int = 0;
                             replace_index++;
+                            prev_if.push_back(0);
                         }
                         indexes.back()--;
                         if(indexes.back() == 0){indexes.pop_back();}
@@ -794,6 +804,7 @@ int main(int argc, char** argv)
                             replace_index++;
                             replace_value.pop_back();
                             reading = 0;
+                            prev_if.pop_back();
 
                         }
                         else if(instruction_type.back() == 5)//else
@@ -801,6 +812,7 @@ int main(int argc, char** argv)
                             instruction_type.pop_back();
                             tmp_instructions.push_back(tmp_instruction.back());
                             tmp_instruction.pop_back();
+                            prev_if.pop_back();
                         }
                         else if(instruction_type.back() == 6)//elif
                         {
@@ -810,6 +822,7 @@ int main(int argc, char** argv)
                             tmp_instructions.push_back(pair<string, short>(" " + to_string(replace_value.back()), 0));
                             tmp_instructions.push_back(tmp_instruction.back());
                             tmp_instruction.pop_back();
+                            prev_if.pop_back();
                         }
                         else if(instruction_type.back() == 8)//while
                         {
@@ -842,15 +855,6 @@ int main(int argc, char** argv)
         error = 1;
     }
 
-/*
-    for(it2 = instructions.begin(); it2 != instructions.end(); it2++)
-    {
-        cout << ">>>";
-        for(int i = 0; i < it2->second.size(); i++)
-        {
-            cout << it2->first << "/" << it2->second[i].first << "/" << it2->second[i].second << "\n";
-        }
-    }*/
     vector<pair<string, short>> processed_instructions;
     if(!error)
     {
@@ -864,7 +868,7 @@ int main(int argc, char** argv)
 
     map<string, vector<pair<string, short>>>::iterator it3;
     map<string, short> final_addresses;
-    int cnt = 0;
+    int num_instructions = 0;
     if(!error)
     {
         for(it3 = instructions.begin(); it3 != instructions.end(); it3++)
@@ -877,60 +881,61 @@ int main(int argc, char** argv)
 
         for(int i = 0; i < processed_instructions.size(); i++)
         {
-            cout << processed_instructions[i].first << "/" << processed_instructions[i].second << "\n";
+            if(processed_instructions[i].first[0] == ':')
+            {
+                it2 = instructions.find(processed_instructions[i].first.substr(1));
+                processed_instructions.erase(processed_instructions.begin() + i);
+                processed_instructions.insert(processed_instructions.begin() + i, it2->second.begin() + 1, it2->second.end());
+            }
         }
-        cout << "\n\n\n";
 
+        int cnt = 0;
         for(int i = 0; i < processed_instructions.size(); i++)
         {
-            if(processed_instructions[i].first != "")
+            if(processed_instructions[i].first[0] == ' ')
             {
-                if(processed_instructions[i].first[0] == ' ')
-                {
-                    final_addresses.insert(pair<string, short>(processed_instructions[i].first.substr(1), cnt));
-                }
+                final_addresses.insert(pair<string, short>(processed_instructions[i].first.substr(1), cnt));
             }
             else{cnt++;}
         }
+/*
+        for(int i = 0; i < processed_instructions.size(); i++)
+        {
+            cout << processed_instructions[i].first << "/" << processed_instructions[i].second << "\n";
+        }
+*/
 
         for(int i = 0; i < processed_instructions.size(); i++)
         {
             if(processed_instructions[i].first != "")
             {
-                if(processed_instructions[i].first[0] == ':')
+                if(processed_instructions[i].first[0] != ' ')
                 {
-
-                }
-                else if(processed_instructions[i].first[0] != ' ')
-                {
-                    cout << (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000 << endl;
+                    ofile << (0b10*0b1000000000+final_addresses.find(processed_instructions[i].first)->second)*0b100000 << endl;
+                    num_instructions++;
                 }
             }
             else
             {
-                cout << processed_instructions[i].second << endl;
+                ofile << processed_instructions[i].second << endl;
+                num_instructions++;
             }
         }
+
+
     }
 
     cout << "\n\n";
-/*
-    for(map<string, short>::iterator i = final_addresses.begin(); i != final_addresses.end(); i++)
-        {
-            cout << i->first << "/" << i->second << endl;
-        }
-*/
 
     if(error)
     {
         cerr << "Compilation failed due to previous errors.\n\n";
         exit(0);
     }
-
-    
-
-
-    
+    else
+    {
+        cout << "Successfully wrote " << num_instructions - 1 << " lines of instructions into " << ofile_path << endl; 
+    }
 
 
 }

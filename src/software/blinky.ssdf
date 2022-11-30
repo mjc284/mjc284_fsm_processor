@@ -12,6 +12,9 @@ state light
     out(echo, a);
     if(a)
     {
+    }
+    else
+    {
         goto light;
     }
     out(led, 1);
@@ -23,9 +26,11 @@ state unlight
     out(echo, b);
     if(b)
     {
-        goto unlight;
+        goto check;
     }
-    else{out(led, 0);}
+    goto unlight;
+    check:
+    out(led, 0);
     goto return2;
 }
 
