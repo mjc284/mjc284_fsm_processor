@@ -1,243 +1,17 @@
-/*
-state one_a
-{
-    loop_one_a:
-    out(3, 0b00100100);
-    if(1)
-    {
-        goto one_b;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_a_1:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_a_1;}
-    }
-    else
-    {
-        goto loop_one_a_1;
-    }
-    out(3, 0b00010010);
-    if(1)
-    {
-        goto one_b;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_a_2:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_a_2;}
-    }
-    else
-    {
-        goto loop_one_a_2;
-    }
-    out(3, 0b00001001);
-    if(1)
-    {
-        goto one_b;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_a_3:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_a_3;}
-    }
-    else
-    {
-        goto loop_one_a_3;
-    }
-    goto loop_one_a;
-}
-
-state one_b
-{
-    loop_one_b:
-    out(3, 0b00100100);
-    if(1)
-    {
-        goto one_a;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_b_1:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_b_1;}
-    }
-    else
-    {
-        goto loop_one_b_1;
-    }
-    out(3, 0b00010010);
-    if(1)
-    {
-        goto one_a;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_b_2:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_b_2;}
-    }
-    else
-    {
-        goto loop_one_b_2;
-    }
-    out(3, 0b00010010);
-    if(1)
-    {
-        goto one_a;
-    }
-    elif(2)
-    {
-        goto two_a;
-    }
-    elif(3)
-    {
-        goto two_a;
-    }
-    loop_one_b_3:
-    out(0, 0b10000000);
-    if(0xff)
-    {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
-        {
-            out(1, 0b11110000);
-        }
-        else{goto loop_one_b_3;}
-    }
-    else
-    {
-        goto loop_one_b_3;
-    }
-    goto loop_one_b;
-}
-
-state two_a
-{
-    goto two_a;
-}
-
-state two_b
-{
-
-}
-
-state three_a
-{
-
-}
-
-state three_b
-{
-
-}
-
-state main
-{
-    
-    out(0, 0);
-    goto one_a;
-}
-*/
-
-
+/* Demo program to animate 6 leds with button inputs. */
+/* Recommended FSM processor clock frequency: 3 kHz */
 
 state one
 {
-
-    out(3, 0b00100000);
-    out(0, 0);
-
-    out(3, 0b00010000);
-    out(0, 0);
-
-    out(3, 0b00001000);
-    out(0, 0);
-
-    out(3, 0b00000100);
-    out(0, 0);
-
-    out(3, 0b00000010);
-    out(0, 0);
-
-    out(3, 0b00000001);
-    out(0, 0);
+    out(5, 0b00100000);
+    out(5, 0b00010000);
+    out(5, 0b00001000);
+    out(5, 0b00000100);
+    out(5, 0b00000010);
+    out(5, 0b00000001);
 
     loop1:
-    out(3, 0);
+    out(5, 0);
     if(1)
     {}
     elif(2)
@@ -246,26 +20,15 @@ state one
     }
     else{goto loop1;}
 
-    out(3, 0b00000001);
-    out(0, 0);
-
-    out(3, 0b00000010);
-    out(0, 0);
-
-    out(3, 0b00000100);
-    out(0, 0);
-
-    out(3, 0b00001000);
-    out(0, 0);
-
-    out(3, 0b00010000);
-    out(0, 0);
-
-    out(3, 0b00100000);
-    out(0, 0);
+    out(5, 0b00000001);
+    out(5, 0b00000010);
+    out(5, 0b00000100);
+    out(5, 0b00001000);
+    out(5, 0b00010000);
+    out(5, 0b00100000);
 
     loop2:
-    out(3, 0);
+    out(5, 0);
     if(1)
     {}
     elif(2)
@@ -279,10 +42,7 @@ state one
 
 state two
 {
-    out(3, 0b00111111);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00111111);
     if(1)
     {
         goto three;
@@ -292,10 +52,7 @@ state two
         goto one;
     }
 
-    out(3, 0b00110011);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00110011);
     if(1)
     {
         goto three;
@@ -305,10 +62,7 @@ state two
         goto one;
     }
 
-    out(3, 0);
-    out(3, 0b00100001);
-    out(0, 0);
-
+    out(5, 0b00100001);
     if(1)
     {
         goto three;
@@ -318,10 +72,7 @@ state two
         goto one;
     }
 
-    out(3, 0);
-    out(3, 0b01000000);
-    out(0, 0);
-
+    out(5, 0b01000000);
     if(1)
     {
         goto three;
@@ -331,10 +82,7 @@ state two
         goto one;
     }
 
-    out(3, 0);
-    out(3, 0b00001100);
-    out(0, 0);
-
+    out(5, 0b00001100);
     if(1)
     {
         goto three;
@@ -344,10 +92,7 @@ state two
         goto one;
     }
 
-    out(3, 0);
-    out(3, 0b00011110);
-    out(0, 0);
-
+    out(5, 0b00011110);
     if(1)
     {
         goto three;
@@ -362,10 +107,7 @@ state two
 
 state three
 {
-    out(3, 0b00111111);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00111111);
     if(1)
     {
         goto two;
@@ -375,10 +117,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00011111);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00011111);
     if(1)
     {
         goto two;
@@ -388,10 +127,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00001111);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00001111);
     if(1)
     {
         goto two;
@@ -401,10 +137,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00000111);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00000111);
     if(1)
     {
         goto two;
@@ -414,10 +147,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00000011);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00000011);
     if(1)
     {
         goto two;
@@ -427,10 +157,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00000001);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00000001);
     if(1)
     {
         goto two;
@@ -440,10 +167,7 @@ state three
         goto one;
     }
 
-    out(3, 0b01000000);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b01000000);
     if(1)
     {
         goto two;
@@ -453,10 +177,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00100000);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00100000);
     if(1)
     {
         goto two;
@@ -466,10 +187,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00110000);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00110000);
     if(1)
     {
         goto two;
@@ -479,10 +197,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00111000);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00111000);
     if(1)
     {
         goto two;
@@ -492,10 +207,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00111100);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00111100);
     if(1)
     {
         goto two;
@@ -505,10 +217,7 @@ state three
         goto one;
     }
 
-    out(3, 0b00111110);
-    out(0, 0);
-
-    out(3, 0);
+    out(5, 0b00111110);
     if(1)
     {
         goto two;
@@ -523,7 +232,6 @@ state three
 
 state main
 {
-    
     out(0, 0);
     goto two;
 }

@@ -78,7 +78,7 @@ int main(int argc, char** argv)
     }
     catch(const exception& e)
     {
-        cerr << e.what() << '\n' << "Ex) compiler.out ifile.ssdf ofile.bin";
+        cerr << e.what() << '\n' << "Ex) compiler ifile.ssdf ofile.bin";
         exit(0);
     }
     
@@ -1112,6 +1112,9 @@ int main(int argc, char** argv)
         error = 1;
         cout << "\n\n";
     }
+
+    ofile.close();
+    ifile.close();
 
     if(error)
     {

@@ -1,86 +1,24 @@
-/* Sample program to 
-Test the compiler */
-/*
-define echo = 0; //Testing comment
-define led = 1;
-
-define a = 204;
-define b = 0b10101010;
-
-state light
-{
-    out(echo, a);
-    if(a)
-    {
-    }
-    else
-    {
-        goto light;
-    }
-    out(led, 1);
-    goto return1;
-}
-
-state unlight
-{
-    out(echo, b);
-    if(b)
-    {
-        goto check;
-    }
-    goto unlight;
-    check:
-    out(led, 0);
-    goto return2;
-}
-
-state main
-{
-    out(0, 0);
-    loop:
-        goto light;
-    return1:
-        unlight;
-    return2:
-    goto loop;
-}
-*/
-/*
-state hiyahoo
-{
-    out(0,1);
-    out(0,2);
-    poopoo:
-    out(0,3);
-    out(0,4);
-}
-
-
-state main
-{
-    hiyahoo;
-
-    pokie:
-}
-*/
+/* Demo program to blink an led with delay. */
+/* Recommended FSM processor clock frequency: 50 MHz */
 
 state delay1
 {
-    out(0, 0b10000000);
-    if(0xff)
+    out(0, 0b10000000); //increment counter 1
+    if(0xff) //if counter 1 = 0xff
     {
-        out(0, 0b11110000);
-        out(1, 0b10000000);
-        if(0xff)
+        out(0, 0b11110000); //reset counter 1
+        out(1, 0b10000000); //increment counter 2
+        if(0xff) //if counter 2 = 0xff
         {
-            out(1, 0b11110000);
+            out(1, 0b11110000); //reset counter 2
         }
-        else{goto loop1;}
+        else{goto delay1;}
     }
     else
     {
-        goto loop1;
+        goto delay1;
     }
+    goto loop1;
 }
 
 state delay2
@@ -94,24 +32,22 @@ state delay2
         {
             out(1, 0b11110000);
         }
-        else{goto loop2;}
+        else{goto delay2;}
     }
     else
     {
-        goto loop2;
+        goto delay2;
     }
+    goto loop2;
 }
 
 state main
 {
-    
-    out(0, 0);
-    loop:
+    goto delay1;
     loop1:
-    delay1;
-    out(2, 1);
+    out(4, 0x01); //output 0x01 to io (led on)
+    goto delay2;
     loop2:
-    delay2;
-    out(2, 0);
-    goto loop;
+    out(4, 0xff); //output 0x00 to io (led off)
+    goto main;
 }

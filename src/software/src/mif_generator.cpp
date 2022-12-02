@@ -51,6 +51,9 @@ int main(int argc, char** argv)
 
     ofile << "\t" << "[" << index << "..511]" << "\t:\t0;\n";
     ofile << "END;";
+
     ofile.close();
     ifile.close();
+
+    cout << "Successfully wrote " << index - 1 << " lines of data into " << ofile_path << endl; 
 }

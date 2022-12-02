@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     }
     catch(const exception& e)
     {
-        cerr << e.what() << '\n' << "Ex) compiler.out ifile.ssdf ofile.bin";
+        cerr << e.what() << '\n' << "Ex) disassembler ifile.bin ofile.asm";
         exit(0);
     }
     
@@ -39,6 +39,8 @@ int main(int argc, char** argv)
     int tmp;
     string s;
     int cnt = 0;
+
+    bool error = 0;
     try
     {
         while(ifile)
@@ -99,8 +101,19 @@ int main(int argc, char** argv)
     catch(pair<string, int>& e)
     {
         cerr << "Invalid instruction at line " << e.second << ":\n" << e.first << endl;
+        error = 1;
     }
 
-    
-    
+    ofile.close();
+    ifile.close();
+
+    if(error)
+    {
+        cerr << "Disassembly failed due to previous errors." << endl;
+        exit(0);
+    }
+    else
+    {
+        cout << "Successfully wrote " << cnt - 1 << " lines of code into " << ofile_path << endl; 
+    }
 }

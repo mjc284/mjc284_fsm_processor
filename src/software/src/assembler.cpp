@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     {
         if(argc == 2)
         {
-            ofile_path = "out.mif";
+            ofile_path = "out.bin";
         }
         else if(argc == 3)
         {
@@ -35,25 +35,24 @@ int main(int argc, char** argv)
     }
     catch(const exception& e)
     {
-        cerr << e.what() << '\n' << "Ex) assembler.out ifile.txt ofile.mif";
+        cerr << e.what() << '\n' << "Ex) assembler ifile.asm ofile.bin";
         exit(0);
     }
     
     ifstream ifile(ifile_path);
     ofstream ofile(ofile_path);
 
-    ofile << "-- FSM Processor Assembler generated Memory Initialization File (.mif)";
-    ofile << "\n\nWIDTH=16;\nDEPTH=512;\n\nADDRESS_RADIX=UNS;\nDATA_RADIX=UNS;\n\n";
-    ofile << "CONTENT BEGIN\n";
-
     string line;
     string instruction;
     string data;
     string format;
+    char binary[2];
     int range = 0;
     int address;
-    int processed_data;
+    short processed_data;
     int index = 0;
+
+    bool error = 0;
     if(ifile)
     {
         address = 0;
@@ -120,7 +119,9 @@ int main(int argc, char** argv)
                         {
                             throw runtime_error("Output data is over the 14 bit limit at line ");
                         }
-                        ofile << "\t" << index << "\t:\t" << processed_data << ";\n";
+                        binary[0] = char(processed_data&0b0000000011111111);
+                        binary[1] = char((processed_data&0b1111111100000000)/0b100000000);
+                        ofile.write (binary, 2);
                         index++;
                     }
                     else if(instruction == "jmp")
@@ -129,7 +130,10 @@ int main(int argc, char** argv)
                         {
                             throw runtime_error("Address data is over the 9 bit limit at line ");
                         }
-                        ofile << "\t" << index << "\t:\t" << ((0b11*0b1000000000)+processed_data)*0b100000 << ";\n";
+                        processed_data = ((0b11*0b1000000000)+processed_data)*0b100000;
+                        binary[0] = char(processed_data&0b0000000011111111);
+                        binary[1] = char((processed_data&0b1111111100000000)/0b100000000);
+                        ofile.write (binary, 2);
                         index++;
                     }
                     else if(instruction == "beq")
@@ -138,7 +142,10 @@ int main(int argc, char** argv)
                         {
                             throw runtime_error("Comparison data is over the 8 bit limit at line ");
                         }
-                        ofile << "\t" << index << "\t:\t" << ((0b10*0b100000000)+processed_data)*0b1000000 << ";\n";
+                        processed_data = ((0b10*0b100000000)+processed_data)*0b1000000;
+                        binary[0] = char(processed_data&0b0000000011111111);
+                        binary[1] = char((processed_data&0b1111111100000000)/0b100000000);
+                        ofile.write (binary, 2);
                         index++;
                     }
                     else
@@ -149,14 +156,23 @@ int main(int argc, char** argv)
                 catch(const std::exception& e)
                 {
                     std::cerr << e.what() << address << '\n';
+                    error = 1;
                 }
             }
             address++;
         }
     }
 
-    ofile << "\t" << "[" << index << "..511]" << "\t:\t0;\n";
-    ofile << "END;";
     ofile.close();
     ifile.close();
+
+    if(error)
+    {
+        cerr << "Assembly failed due to previous errors." << endl;
+        exit(0);
+    }
+    else
+    {
+        cout << "Successfully wrote " << index - 1 << " lines of instructions into " << ofile_path << endl; 
+    }
 }
