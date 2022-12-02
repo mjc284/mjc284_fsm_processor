@@ -1,11 +1,8 @@
-module spi_output (
+module spi_register (
 	input mosi,
 	input ss,
 	input sck,
-	output miso,
-	
-	input [7:0] din,
-	output [7:0] dout
+	output miso
 	);
 
 	reg [7:0] shift_dout = 8'b10000000;
@@ -34,8 +31,7 @@ module spi_output (
 			else
 				latch_dout <= shift_din;
 	end
-
-	assign dout = latch_dout;
-	assign miso = |(din&shift_dout);
+	
+	assign miso = |(latch_dout&shift_dout);
 
 endmodule
