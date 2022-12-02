@@ -1,0 +1,237 @@
+/* Demo program to animate 6 leds with button inputs. */
+/* Recommended FSM processor clock frequency: 3 kHz */
+
+state one
+{
+    out(5, 0b00100000);
+    out(5, 0b00010000);
+    out(5, 0b00001000);
+    out(5, 0b00000100);
+    out(5, 0b00000010);
+    out(5, 0b00000001);
+
+    loop1:
+    out(5, 0);
+    if(1)
+    {}
+    elif(2)
+    {
+        goto two;
+    }
+    else{goto loop1;}
+
+    out(5, 0b00000001);
+    out(5, 0b00000010);
+    out(5, 0b00000100);
+    out(5, 0b00001000);
+    out(5, 0b00010000);
+    out(5, 0b00100000);
+
+    loop2:
+    out(5, 0);
+    if(1)
+    {}
+    elif(2)
+    {
+        goto two;
+    }
+    else{goto loop2;}
+
+    goto one;
+}
+
+state two
+{
+    out(5, 0b00111111);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00110011);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00100001);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b01000000);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00001100);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00011110);
+    if(1)
+    {
+        goto three;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    goto two;
+}
+
+state three
+{
+    out(5, 0b00111111);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00011111);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00001111);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00000111);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00000011);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00000001);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b01000000);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00100000);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00110000);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00111000);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00111100);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    out(5, 0b00111110);
+    if(1)
+    {
+        goto two;
+    }
+    elif(2)
+    {
+        goto one;
+    }
+
+    goto three;
+}
+
+state main
+{
+    out(0, 0);
+    goto two;
+}

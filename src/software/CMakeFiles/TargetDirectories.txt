@@ -1,0 +1,6 @@
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/assembler.dir
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/disassembler.dir
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/compiler.dir
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/mif_generator.dir
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/edit_cache.dir
+/home/mjc284/Documents/Work/mjc284_fsm_processor/src/software/CMakeFiles/rebuild_cache.dir
