@@ -5,7 +5,7 @@ An attempt to design a programmable finite state machine with basic conditional 
 ## Concept
 The aim of this project is to create and build a new processor architecture and language that is able to execute three types of instructions: outputting data, jumping to a specific instruction address, or skipping an instruction if the input data is equal to the immediate data in the instruction. The processor cannot compute or compare data by itself and needs externel SPI modules such as memory and ALU to operate as a standard processor. Therefore, the FSM processor has a much more primitive architecture compared to other microprocessors. 
 
-The advantage of this primitive processor is that it only takes up merely 62 logic elements with 4-input LUTs, allowing the processor to be implemented on small CPLDs. This gives the FSM processor the potential to replace microprocessors for simple tasks that does not involve any computation and can be expressed as finite state machines or sequences of output data, such as low-spec laundry machines, LED light animators, and digital lock systems.
+The advantage of this primitive processor is that it only takes up merely 34 logic elements with 4-input LUTs, allowing the processor to be implemented on small CPLDs. This gives the FSM processor the potential to replace microprocessors for simple tasks that does not involve any computation and can be expressed as finite state machines or sequences of output data, such as low-spec laundry machines, LED light animators, and digital lock systems.
 
 Refer to the following page for demonstration codes and video:
 
@@ -23,7 +23,12 @@ The processor executes the following state diagram based on the given opcode:
 The karnaugh-mapping and implementation of the finite state machine circuit was done using python scripts from my other project:
 
 ### Specs and Performance
-
+*Maximum number of SPI peripherals: 64 modules
+*Resource usage: 34 Logic Elements, 1 Synchronous Internal Memory
+*Speed: 
+  *16 clock cycles per output instruction
+  *11 clock cycles per jump instruction
+  *10 clock cycles per conditional skip instruction.
 
 ## Software
 
