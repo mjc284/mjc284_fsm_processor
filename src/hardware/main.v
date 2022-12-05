@@ -18,7 +18,7 @@ module main (
 	wire miso;
 		
 	fsm_processor FSM_Processor(
-		.clk(cnt[0]),
+		.clk(clk),
 		.clk_ram(clk),
 		.miso(miso),
 		.mosi(mosi),
