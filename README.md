@@ -23,12 +23,12 @@ The processor executes the following state diagram based on the given opcode:
 The karnaugh-mapping and implementation of the finite state machine circuit was done using python scripts from my other project:
 
 ### Specs and Performance
-*Maximum number of SPI peripherals: 64 modules
-*Resource usage: 34 Logic Elements, 1 Synchronous Internal Memory
-*Speed: 
-  *16 clock cycles per output instruction
-  *11 clock cycles per jump instruction
-  *10 clock cycles per conditional skip instruction.
+* Maximum number of SPI peripherals: 64 modules
+* Resource usage: 34 Logic Elements, 1 Synchronous Internal Memory
+* Speed: 
+  * 16 clock cycles per output instruction
+  * 11 clock cycles per jump instruction
+  * 10 clock cycles per conditional skip instruction.
 
 ## Software
 
