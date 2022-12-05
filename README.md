@@ -18,11 +18,11 @@ The architecture of the FSM processor consist of three main parts: the 16-bit sy
 
 ### Instruction Format
 All instructions are 16-bits in length with the first two bits (towards the MSB) being the opcode:
-![Instructions]("/pictures/Instructions.png" "Instructions")
+![Instructions](/pictures/Instructions.png "Instructions")
 
 ### Finite State Machine
 The processor executes the following state diagram based on the given opcode:
-![State_Diagram]("/pictures/State_Diagram.jpeg" "State_Diagram")
+![State_Diagram](/pictures/State_Diagram.jpeg "State_Diagram")
 
 The karnaugh-mapping and implementation of the finite state machine circuit was done using python scripts from my other project:
 
