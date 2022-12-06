@@ -36,5 +36,28 @@ The karnaugh-mapping and implementation of the finite state machine circuit was 
 
 ## Software
 
+### Overview
+The software part of the project involves creating a custom assembly language, a custom program language, and assemblers and compilers to read the code and generate binary data for the processor memory. The program language is much different from other software languages in that it purely serves to describe the states or sequences of instructions to be executed, without any computation, comparison, or read/write. Therefore, the custom language for this processor, which I named as the state sequence description language (SSD), closely resembles c code without arithmetic, comparison, and variable assignment operators. 
+
+### Assembly
+There are three types of assembly instructions which are 'data output', 'jump', and 'conditional skip'.
+
+The 'data output' instruction outputs serial spi data to a SPI module at a specific address. 
+```
+out [data]
+```
+The [data] is a 14 bit number in which the upper 6 bits specify the SPI slave address and lower 8 bits specify the data to send. 
+
+The 'jump' instruction jumps to a specified instruction address. 
+```
+jmp [address]
+```
+The [address] is a 9 bit number for the next instruction address to jump to. 
+
+The 'conditional skip' instruction skips the next instruction if the comparison data is equal to MISO data sent from the SPI slave. The selected SPI device is the SPI device written to during the last 'data output' instruction. This means in order to perform the 'conditional skip' to a new SPI device, a 'data output' with no-operation data should be sent to the desired SPI device first. During the retrival of the MISO data the FSM processor outputs 8 bits of '0' to the SPI device. Therefore, it is advised to require all peripheral SPI devices to have a no-operation code for the 8 bit data '00000000'.
+```
+beq [comparison_data]
+```
+The [comparison_data] is an 8 bit number to be compared with the 8 bit MISO data. 
 
 ## Project Directory Map
