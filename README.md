@@ -59,5 +59,16 @@ The 'conditional skip' instruction skips the next instruction if the comparison 
 beq [comparison_data]
 ```
 The [comparison_data] is an 8 bit number to be compared with the 8 bit MISO data. 
+All numerical arguments can be entered as decimal (123... or 0d123...), binary (0b1101...), or hex (0xf1e...).
+
+Example:
+```
+# Comments can be added after hashes.
+out 0b11010010101010 # Output '10101010' to SPI device at address '110100'.
+beq 10101010 # Skip next instruction if MISO output from SPI device at '110100' is '10101010'.
+jmp 0 # Goto first instruction.
+out 0b11111100001111 # Output '00001111' to SPI device at address '111111'.
+jmp 0 # Goto first instruction.
+```
 
 ## Project Directory Map
