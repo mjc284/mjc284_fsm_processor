@@ -61,7 +61,8 @@ beq [comparison_data]
 The [comparison_data] is an 8 bit number to be compared with the 8 bit MISO data. 
 All numerical arguments can be entered as decimal (123... or 0d123...), binary (0b1101...), or hex (0xf1e...).
 
-Example:
+Example: 
+In example.asm,
 ```
 # Comments can be added after hashes.
 out 0b11010010101010 # Output '10101010' to SPI device at address '110100'.
@@ -70,5 +71,34 @@ jmp 0 # Goto first instruction.
 out 0b11111100001111 # Output '00001111' to SPI device at address '111111'.
 jmp 0 # Goto first instruction.
 ```
+Compilation: 
+In shell,
+```
+/src/software/build/assembler example.asm output.bin
+```
+Output:
+In output.bin,
+```
+
+```
+
+### MIF Generation
+The project has yet to implement a method to upload the program into the internal ram memory without flashing the CPLD itself. For now, the program data is inserted during synthesis by the Intel memory initialization file (MIF). The project includes a tool convert the compiled or assembled binary into a MIF.
+
+MIF Generation:
+In shell,
+```
+/src/software/build/mif_generator output.bin program.mif
+```
+
+Output:
+In program.mif,
+```
+
+```
+
+### Compilation
+
+
 
 ## Project Directory Map
