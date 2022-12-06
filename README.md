@@ -4,11 +4,16 @@ An attempt to design a programmable finite state machine with basic conditional 
 ## Table of contents
 - [Concept](#Concept)
 - [Hardware](#Hardware)
-  - [Overview](#Overview)
+  - [Overview](#Overview1)
   - [Instruction Format](#Instruction_Format)
   - [Finite State Machine](#Finite_State_Machine)
   - [Specs and Performance](#Specs_and_Performance)
 - [Software](#Software)
+  - [Overview](#Overview2)
+  - [Assembly](#Assembly)
+  - [MIF Generation](#MIF_Generation)
+  - [Compilation](#Compilation)
+- [Project Directory Map](#Project_Directory_Map)
 
 
 ## Concept <a name="Concept"></a>
@@ -22,7 +27,7 @@ Refer to the following page for demonstration codes and video:
 
 ![Annotated_Circuit](/circuit/Annotated_Circuit.png "Annotated_Circuit")
 
-### Overview <a name="Overview"></a>
+### Overview <a name="Overview1"></a>
 The architecture of the FSM processor consist of three main parts: the 16-bit synchronous memory, a finite state machine based on the instruction op-code, a counter with reset, and a combinational circuit to control the counter reset based on the state. When the instruction is given by the memory, the finite state machine executes a sequence of states based on the three opcodes for the 'data output', 'jump', and 'conditional skip' instructions. The counter reset controller triggers the state machine to move on to the next state and resets the counter when the counter reaches a specific number of clock cycles for a given state. The focus of this design was to prioritize reducing the size of the processor while sacrificing the speed. Therefore, all of the data within the processor flow serially in order to reduce the the number of gates and resources. Furthermore, the small Intel CPLD used in this project only has a serial internal memory.
 
 ### Instruction Format <a name="Instruction_Format"></a>
@@ -45,10 +50,10 @@ The karnaugh-mapping and implementation of the finite state machine circuit was 
 
 ## Software <a name="Software"></a>
 
-### Overview
+### Overview <a name="Overview2"></a>
 The software part of the project involves creating a custom assembly language, a custom program language, and assemblers and compilers to read the code and generate binary data for the processor memory. The program language is much different from other software languages in that it purely serves to describe the states or sequences of instructions to be executed, without any computation, comparison, or read/write. Therefore, the custom language for this processor, which I named as the state sequence description language (SSD), closely resembles c code without arithmetic, comparison, and variable assignment operators. 
 
-### Assembly
+### Assembly <a name="Assembly"></a>
 There are three types of assembly instructions which are 'data output', 'jump', and 'conditional skip'.
 
 The 'data output' instruction outputs serial spi data to a SPI module at a specific address. 
@@ -91,7 +96,7 @@ In output.bin,
 
 ```
 
-### MIF Generation
+### MIF Generation <a name="MIF_Generation"></a>
 The project has yet to implement a method to upload the program into the internal ram memory without flashing the CPLD itself. For now, the program data is inserted during synthesis by the Intel memory initialization file (MIF). The project includes a tool convert the compiled or assembled binary into a MIF.
 
 MIF Generation:
@@ -106,8 +111,8 @@ In program.mif,
 
 ```
 
-### Compilation
+### Compilation <a name="Compilation"></a>
 
 
 
-## Project Directory Map
+## Project Directory Map <a name="Project_Directory_Map"></a>
