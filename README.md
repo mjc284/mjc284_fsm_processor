@@ -2,13 +2,13 @@
 An attempt to design a programmable finite state machine with basic conditional loop and input-output features.
 
 ## Table of contents
-1. [Concept](#Concept)
-2. [Hardware](#Hardware)
- 1. [Overview](#Overview)
- 2. [Instruction Format](#Instruction_Format)
- 3. [Finite State Machine](#Finite_State_Machine)
- 4. [Specs and Performance](#Specs_and_Performance)
-3. [Software](#Software)
+- [Concept](#Concept)
+- [Hardware](#Hardware)
+  - [Overview](#Overview)
+  - [Instruction Format](#Instruction_Format)
+  - [Finite State Machine](#Finite_State_Machine)
+  - [Specs and Performance](#Specs_and_Performance)
+- [Software](#Software)
 
 
 ## Concept <a name="Concept"></a>
