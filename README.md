@@ -169,6 +169,7 @@ state main
 ```
 
 Compilation, Disassembly, and MIF Generation:
+
 In shell,
 ```
 /src/software/build/compiler ./example.ssdf example.bin
