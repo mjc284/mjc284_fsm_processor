@@ -80,7 +80,7 @@ In example.asm,
 ```
 # Comments can be added after hashes.
 out 0b11010010101010            # Output '10101010' to SPI device at address '110100'.
-beq 10101010                    # Skip next instruction if MISO output from SPI device at '110100' is '10101010'.
+beq 0b10101010                    # Skip next instruction if MISO output from SPI device at '110100' is '10101010'.
 jmp 0                           # Goto first instruction.
 out 0b11111100001111            # Output '00001111' to SPI device at address '111111'.
 jmp 0                           # Goto first instruction.
@@ -88,12 +88,12 @@ jmp 0                           # Goto first instruction.
 Compilation: 
 In shell,
 ```
-/src/software/build/assembler example.asm output.bin
+/src/software/build/assembler example.asm example.bin
 ```
 Output:
-In output.bin,
+In example.bin (through hexdump),
 ```
-
+34aa aa80 c000 3f0f c000
 ```
 
 ### MIF Generation <a name="MIF_Generation"></a>
@@ -102,13 +102,29 @@ The project has yet to implement a method to upload the program into the interna
 MIF Generation:
 In shell,
 ```
-/src/software/build/mif_generator output.bin program.mif
+/src/software/build/mif_generator example.bin program.mif
 ```
 
 Output:
 In program.mif,
 ```
+-- Generated Memory Initialization File for FSM Processor (.mif)
 
+WIDTH=16;
+DEPTH=512;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=UNS;
+
+CONTENT BEGIN
+	0	:	13482;
+	1	:	43648;
+	2	:	49152;
+	3	:	16143;
+	4	:	49152;
+	5	:	49152;
+	[6..511]	:	0;
+END;
 ```
 
 ### Compilation <a name="Compilation"></a>
