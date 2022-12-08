@@ -80,7 +80,7 @@ In example.asm,
 ```
 # Comments can be added after hashes.
 out 0b11010010101010            # Output '10101010' to SPI device at address '110100'.
-beq 0b10101010                    # Skip next instruction if MISO output from SPI device at '110100' is '10101010'.
+beq 0b10101010                  # Skip next instruction if MISO output from SPI device at '110100' is '10101010'.
 jmp 0                           # Goto first instruction.
 out 0b11111100001111            # Output '00001111' to SPI device at address '111111'.
 jmp 0                           # Goto first instruction.
@@ -128,7 +128,44 @@ END;
 ```
 
 ### Compilation <a name="Compilation"></a>
+The language made for this processor is named the "state sequence description language". The syntax is very similar to C with only 'if', 'while', 'define', plus a new 'state' statement. The following example code exaplains all the possible syntax in this language:
 
+```
+//Comments can be added -
+/* In the same way as in C/C++ */
 
+//The define keyword allows the creation of a variable to be substituted by its value during compilation.
+define a = 5;
+
+//States act in a similar way as functions in C, but without any arguments or returning values.
+//States can only be accessed by the keyword 'goto' and cannot be directly called like functions.
+state sample
+{
+    out(6, 0); //Output nop ("0b00000000") to SPI device at address '6' (selecting that device for next 'if' statement).
+    if(5) //If 8 bit data in SPI device at address '6' equals 5:
+    {
+        out(4, 1);
+        out(a, 2);
+    }
+    else
+    {
+        out(6, 0);
+        while(6) //While 8 bit data in SPI device at address '6' equals 6:
+        {
+            out(5, a);
+        }
+    }
+    goto return; //Goto instructions can jump to any labels in any state.
+}
+
+//There has to be a 'main' state in which the codes starts at.
+state main 
+{
+    loop1: //Labels act the same way as in C/C++.
+    goto sample; //Jump to the beginning of state 'sample'.
+    return:
+    goto main; //Loop back to state 'main'.
+}
+```
 
 ## Project Directory Map <a name="Project_Directory_Map"></a>
