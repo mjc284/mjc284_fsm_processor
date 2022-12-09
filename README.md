@@ -48,6 +48,24 @@ The karnaugh-mapping and implementation of the finite state machine circuit was 
   * 11 clock cycles per jump instruction
   * 10 clock cycles per conditional skip instruction.
 
+### Essential SPI Modules <a name="Essential"></a>
+The project includes 3 types of SPI modules that may be essential for minimal operation of the FSM processor. These modules in the /src/hardware/spi_modules/ folder include an SPI register, output, and counter. Two SPI counters are attached to address 0 and 1, two SPI registers are attached to address 2 and 3, and one SPI output is attached to address 4 with led connections.
+
+The SPI counter operates with 3 types of instruction data from the MOSI:
+* "0b00000000" = no operation/send back count data through MISO
+* "0b10000000" = increment by one
+* "0b11110000" = reset to zero
+
+The SPI register operates with 2 types of instruction data from the MOSI:
+* "0b00000000" = no operation/send back stored register data through MISO
+* else         = store new MOSI data into the register
+
+The SPI output operates with 3 types of instruction data from the MOSI:
+* "0b00000000" = no operation/send back stored register data through MISO
+* "0b11111111" = clear output data to zero.
+* else         = update output data with data recieved from MOSI.
+
+
 ## Software <a name="Software"></a>
 
 ### Overview <a name="Overview2"></a>
@@ -128,7 +146,7 @@ END;
 ```
 
 ### Compilation <a name="Compilation"></a>
-The language made for this processor is named the "state sequence description language". The syntax is very similar to C with only 'if', 'while', 'define', plus a new 'state' statement. The following example code exaplains all the possible syntax in this language:
+The language made for this processor is named the "state sequence description language". The syntax is very similar to C with only 'if', 'while', 'define', plus a new 'state' statement. The compiler for this language follows the basic model of tokenizing the code first and processing the type of statement, scope, and variables afterwards. The following example code exaplains all the possible syntax in this language:
 
 ```
 //Comments can be added -
@@ -231,4 +249,21 @@ CONTENT BEGIN
 END;
 ```
 
+Refer to the following directory for example assembly and program codes:
+/src/software/build/compiler
+
+### How to Build from Source Code <a name="How_To"></a>
+After installing cmake in shell,
+```
+cd /src/software
+make clean
+make
+```
+
 ## Project Directory Map <a name="Project_Directory_Map"></a>
+src
+├── hardware                # Folder containing all hardware description in verilog code.
+├── software                
+│   ├── src                 # Source code.
+│   ├── demo                # Demo example codes.
+│   └── build               # Compiled executables.
