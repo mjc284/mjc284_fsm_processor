@@ -8,6 +8,7 @@ An attempt to design a programmable finite state machine with basic conditional 
   - [Instruction Format](#Instruction_Format)
   - [Finite State Machine](#Finite_State_Machine)
   - [Specs and Performance](#Specs_and_Performance)
+  - [Essential SPI Modules](#Essential)
 - [Software](#Software)
   - [Overview](#Overview2)
   - [Assembly](#Assembly)
@@ -61,10 +62,11 @@ The SPI register operates with 2 types of instruction data from the MOSI:
 * else         = store new MOSI data into the register
 
 The SPI output operates with 3 types of instruction data from the MOSI:
-* "0b00000000" = no operation/send back stored register data through MISO
+* "0b00000000" = no operation/send back output data through MISO
 * "0b11111111" = clear output data to zero.
 * else         = update output data with data recieved from MOSI.
 
+The demo codes in the /src/software/demo use these modules for blinking or animating LEDs.
 
 ## Software <a name="Software"></a>
 
