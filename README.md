@@ -263,9 +263,9 @@ make
 ```
 
 ## Project Directory Map <a name="Project_Directory_Map"></a>
-src
-├── hardware                # Folder containing all hardware description in verilog code.
-├── software                
-│   ├── src                 # Source code.
-│   ├── demo                # Demo example codes.
-│   └── build               # Compiled executables.
+src  
+├── hardware                # Folder containing all hardware description in verilog code.  
+├── software                  
+│   ├── src                 # Source code.  
+│   ├── demo                # Demo example codes.  
+│   └── build               # Compiled executables.  
